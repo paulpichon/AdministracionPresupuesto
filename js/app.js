@@ -9,6 +9,8 @@ eventListeners();
 function eventListeners() {
     //funcion que preguntara el presupuesto
     document.addEventListener('DOMContentLoaded', preguntarPresupuesto );
+    //listener al formulario para poder agregar gastos
+    formulario.addEventListener('submit', agregarGasto );
 }
 
 //clases
@@ -25,7 +27,41 @@ class Presupuesto {
 }
 //clase para la interface del usuario
 class UI{
-    //sin constructor
+    //metodo para insertar el presupuesto en el HTML
+    insertaPresupuesto( cantidad ) {
+        //console.log( cantidad );
+        //extrayedo los valores con destructuring
+        const { presupuesto, restante } = cantidad;
+        //insertar presupuesto y restante respectivamente en el html
+        document.querySelector('#total').textContent = presupuesto;
+        document.querySelector('#restante').textContent = restante;
+    }
+    //metodo para imprimir alertas/mensajes
+    imprimirAlerta( mensaje, tipo ) {
+        //creael el html
+        const divMensaje = document.createElement('div');
+        //clases
+        divMensaje.classList.add('text-center', 'alert');
+        //verificamos el tipo de mensaje
+        if ( tipo === 'error') {
+            //agregar la clase tipo error
+            divMensaje.classList.add('alert-danger');
+        }else{
+            //agregar la clase tipo exito
+            divMensaje.classList.add('alert-success');
+        }
+        //mensaje de error
+        //agregar la clase tipo error
+        divMensaje.textContent = mensaje;
+        //insertar en el html
+        document.querySelector('.primario').insertBefore( divMensaje, formulario );
+        //quitar mensaje
+        setTimeout(() => {
+            //remover mensaje
+            divMensaje.remove();
+        }, 3000);
+    }
+
 }
 //instanciar UI
 //variable de forma global
@@ -34,7 +70,8 @@ const ui = new UI();
 //VARIABLES CON EL PRESUPUESTO INTRODUCIDO POR EL USUARIO
 let presupuesto;
 
-//funciones
+/**************************FUNCIONES***********/
+
 //funcion para preguntar el presupuesto
 function preguntarPresupuesto() {
     //prompt para preguntar el presupuesto
@@ -52,4 +89,28 @@ function preguntarPresupuesto() {
     //instanciar presupuesto
     presupuesto = new Presupuesto( presupuestoUsuario );
     console.log( presupuesto );
+    //insertar el presupuesto en el htm
+    ui.insertaPresupuesto( presupuesto );
+}
+//funcion para agregar gastos
+function agregarGasto( e ) {
+    //prevenir la accion por default
+    e.preventDefault();
+    //leer los datos del formulario
+    const nombre = document.querySelector('#gasto').value;
+    const cantidad = document.querySelector('#cantidad').value;
+    //validar  que los campos no esten vacios
+    if ( nombre === '' || cantidad === '') {
+        //llamar imprimir alerta
+        ui.imprimirAlerta('AMBOS CAMPOS SON OBLIGATORIOS', 'error');
+        return;
+    }
+    //validar que la cantidad no sea negativa
+    else if( cantidad <= 0 || isNaN( cantidad ) ) {
+        //llamar imprimir alerta
+        ui.imprimirAlerta('CANTIDAD NO VALIDA', 'error');
+        return;
+    }
+    //AGREGANDO GASTO
+    console.log("agregando gasto");
 }
