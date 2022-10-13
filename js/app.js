@@ -24,6 +24,13 @@ class Presupuesto {
         //variable para los gastos que ser un arreglo vacio donde se iran acumulando los gastos
         this.gastos = [];
     }
+
+    //metodo para crear un nuevo gasto
+    nuevoGasto( gasto) {
+        //se asigna el valor del arreglo más el nuevo gasto
+        this.gastos = [ ...this.gastos, gasto ];
+        console.log( this.gastos );
+    }
 }
 //clase para la interface del usuario
 class UI{
@@ -98,7 +105,7 @@ function agregarGasto( e ) {
     e.preventDefault();
     //leer los datos del formulario
     const nombre = document.querySelector('#gasto').value;
-    const cantidad = document.querySelector('#cantidad').value;
+    const cantidad = Number( document.querySelector('#cantidad').value );
     //validar  que los campos no esten vacios
     if ( nombre === '' || cantidad === '') {
         //llamar imprimir alerta
@@ -112,5 +119,17 @@ function agregarGasto( e ) {
         return;
     }
     //AGREGANDO GASTO
-    console.log("agregando gasto");
+    //generar un objeto con el gasto
+    //contrario al destructuring como se ve aqui abajo
+    //MEJORIRA DEL OBJETO LITERAL( Object Literal Enhancement ) = lo contrario al destructuring
+    //aqui mismo agregamos el id del gasto
+    const gasto = { nombre, cantidad, id: Date.now() };
+
+    //añade un nuevo gasto
+    presupuesto.nuevoGasto( gasto );
+
+    //mostrar alerta de correcto
+    ui.imprimirAlerta('GASTO AGREGADO CORRECTAMENTE');
+    //RESETEAR EL FORMULARIO
+    formulario.reset();
 }
