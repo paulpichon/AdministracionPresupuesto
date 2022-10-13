@@ -12,7 +12,27 @@ function eventListeners() {
 }
 
 //clases
+//clase para presupuesto
+class Presupuesto {
+    constructor( presupuesto ){
+        //Presupuesto
+        this.presupuesto = Number( presupuesto );
+        //restante al ser la primera vez que se muestra el presupuesto sera igual que el restante
+        this.restante = Number( presupuesto );
+        //variable para los gastos que ser un arreglo vacio donde se iran acumulando los gastos
+        this.gastos = [];
+    }
+}
+//clase para la interface del usuario
+class UI{
+    //sin constructor
+}
+//instanciar UI
+//variable de forma global
+const ui = new UI();
 
+//VARIABLES CON EL PRESUPUESTO INTRODUCIDO POR EL USUARIO
+let presupuesto;
 
 //funciones
 //funcion para preguntar el presupuesto
@@ -28,4 +48,8 @@ function preguntarPresupuesto() {
         //recargar la pagina
         window.location.reload();
     }
+    //presupuesto valido
+    //instanciar presupuesto
+    presupuesto = new Presupuesto( presupuestoUsuario );
+    console.log( presupuesto );
 }
