@@ -42,6 +42,15 @@ class Presupuesto {
         this.restante = this.presupuesto - gastado;
         console.log( this.restante );
     }
+    //eliminar un gasto 
+    eliminarGasto( id ) {
+        //filter()
+        this.gastos = this.gastos.filter( gasto => gasto.id !== id );
+        //console.log( this.gastos );
+        //para actualizar el restante
+        //llamar metodo clacularRestante
+        this.calcularRestante();
+    }
 }
 //clase para la interface del usuario
 class UI{
@@ -80,7 +89,7 @@ class UI{
         }, 3000);
     }
     //funcion para mostrar los gastos
-    agregarGastoListado( gastos ) {
+    mostrarGastos( gastos ) {
         //limpiar el html anterior se llama con this
         this.limpiarHTML();
         //iterara sobre los gastos
@@ -101,6 +110,11 @@ class UI{
             //boton para borrar el gasto
             const btnBorrar = document.createElement('button');
             btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
+            //agregar funcion para borrar gasto
+            btnBorrar.onclick = () => {
+                //funcion pára eliminar el gasto y como parametro le pasamos el id que se encuentra mas arriba
+                eliminarGasto( id );
+            }
             //texcontent
             btnBorrar.innerHTML = 'Borrar &times;';
             nuevoGasto.appendChild( btnBorrar );
@@ -120,6 +134,40 @@ class UI{
     actualizarRestante( restante ) {
         //restante en el html
         document.querySelector('#restante').textContent = restante;
+    }
+    //metodo para comprobar lo que queda del presupuesto
+    comprobarPresupuesto( presupuestoObj ) {
+        //destructuring
+        const { presupuesto, restante } = presupuestoObj;
+        //variable que hace referencia a divRestante
+        const restanteDiv = document.querySelector('.restante');
+
+        //comprobar 25%
+        if ( ( presupuesto / 4 ) > restante ) {
+            //quitar clase alert-success
+            restanteDiv.classList.remove('alert-success', 'alert-warning');
+            //agregar alert-danger
+            restanteDiv.classList.add('alert-danger');
+        }else if( ( presupuesto / 2 ) > restante ) {
+            //quitar clase alert-success
+            restanteDiv.classList.remove('alert-success');
+            //agregar alert-warning
+            restanteDiv.classList.add('alert-warning');
+        }//cuando se borrar los gastos
+        else {
+             //quitar clases cuando se eliminen gastos
+             restanteDiv.classList.remove('alert-danger', 'alert-warning');
+             //agregar clase de success
+            restanteDiv.classList.add('alert-success');
+        }
+
+        //si el total es 0 o menor
+        if ( restante <= 0) {
+            ui.imprimirAlerta('EL PRESUPUESTO SE HA AGOTADO', 'error');
+            //evitar que puedan agregar mas gastos en caso de que el presupuesto se haya pasado
+            formulario.querySelector('button[type="submit"]').disabled = true;
+        }
+
     }
 
 }
@@ -189,9 +237,26 @@ function agregarGasto( e ) {
     //destructuring
     const { gastos, restante } = presupuesto;
     //llamar al metodo y pasamos como argumento los gastos
-    ui.agregarGastoListado( gastos );
+    ui.mostrarGastos( gastos );
     //mostrar el restante
     ui.actualizarRestante( restante );
+    //metodo para comprobar el presupuesto
+    ui.comprobarPresupuesto( presupuesto );
     //RESETEAR EL FORMULARIO
     formulario.reset();
+}
+//funcion para eliminar un gasto
+function eliminarGasto( id ) {
+    //eliminar un gasto desde el objeto
+    presupuesto.eliminarGasto(id);
+
+    //elimina el gasto desde el html
+    //destructuring para acceder a gastos del arreglo presupuesto
+    const { gastos, restante } = presupuesto;
+    //renderizar los gastos
+    ui.mostrarGastos( gastos );
+    //mostrar el restante
+    ui.actualizarRestante( restante );
+    //metodo para comprobar el presupuesto
+    ui.comprobarPresupuesto( presupuesto );
 }
