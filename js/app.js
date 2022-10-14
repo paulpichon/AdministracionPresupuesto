@@ -29,7 +29,7 @@ class Presupuesto {
     nuevoGasto( gasto) {
         //se asigna el valor del arreglo más el nuevo gasto
         this.gastos = [ ...this.gastos, gasto ];
-        console.log( this.gastos );
+        //console.log( this.gastos );
     }
 }
 //clase para la interface del usuario
@@ -68,8 +68,45 @@ class UI{
             divMensaje.remove();
         }, 3000);
     }
+    //funcion para mostrar los gastos
+    agregarGastoListado( gastos ) {
+        //limpiar el html anterior se llama con this
+        this.limpiarHTML();
+        //iterara sobre los gastos
+        gastos.forEach(gasto => {
+            //destructuring
+            const { cantidad, nombre, id } = gasto;
+            //crear el li
+            const nuevoGasto = document.createElement('li');
+            nuevoGasto.className = 'list-group-item d-flex justify-content-between align-items-center';
+            //buena forma de hacerlo
+            //nuevoGasto.setAttribute('data-id', id);
+            //nueva forma de hacerlo = recomendada
+            nuevoGasto.dataset.id = id;
+
+            //agregar el html del gasto
+            nuevoGasto.innerHTML = `${ nombre }<span class="badge badge-primary badge-primary badge-pill"> ${ cantidad } </span> `;
+            
+            //boton para borrar el gasto
+            const btnBorrar = document.createElement('button');
+            btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
+            //texcontent
+            btnBorrar.innerHTML = 'Borrar &times;';
+            nuevoGasto.appendChild( btnBorrar );
+            //agregar al html
+            gastoListado.appendChild( nuevoGasto );
+        });
+    }
+
+    //limpiar el html anterior
+    limpiarHTML(){
+        while( gastoListado.firstChild ) {
+            gastoListado.removeChild( gastoListado.firstChild );
+        }
+    }
 
 }
+
 //instanciar UI
 //variable de forma global
 const ui = new UI();
@@ -130,6 +167,12 @@ function agregarGasto( e ) {
 
     //mostrar alerta de correcto
     ui.imprimirAlerta('GASTO AGREGADO CORRECTAMENTE');
+
+    //imprimir los gastos
+    //destructuring
+    const { gastos } = presupuesto;
+    //llamar al metodo y pasamos como argumento los gastos
+    ui.agregarGastoListado( gastos );
     //RESETEAR EL FORMULARIO
     formulario.reset();
 }
