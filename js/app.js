@@ -1,3 +1,4 @@
+//17/10/2010
 //variables y selectores
 //formulario
 const formulario = document.querySelector('#agregar-gasto');
